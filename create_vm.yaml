@@ -1,0 +1,38 @@
+---
+- hosts: tower.emk.local
+  gather_facts: yes
+
+  tasks:
+  - name: Clone the template
+    vmware_guest:
+      hostname: 192.168.0.150
+      username: administrator@vsphere.local
+      password: Labserver123$
+      validate_certs: False
+      folder: /405
+      name: aafetorgbor
+      template: R8-template
+      datacenter: EMK-LAB
+      datastore: datastore2
+      networks:
+      - name: VLAN405
+        ip: 10.4.5.20
+        netmask: 255.255.255.0
+        device_type: vmxnet3
+        gateway: 10.4.5.1
+        type: static
+        dns_servers: 10.4.0.11
+      customization:
+        domain: emk.local
+        hostname: aafetorgbor
+        dns_servers:
+        - 10.4.0.11
+        - 10.4.0.14
+      state: poweredon
+      wait_for_ip_address: yes
+    delegate_to: localhost
+
+    register: deploy
+  - debug:
+      var: deploy
+
